@@ -15,23 +15,29 @@ app.secret_key = 'your_secret_key' # this is an artifact for using flash display
 def home():
     return render_template('home.html')
 
-@app.route('/add-user', methods=['GET', 'POST'])
-def add_user():
+
+
+#This function is written with the help of ChatGPT. 
+@app.route('/search-continent', methods=['GET', 'POST'])
+def search_continent():
     if request.method == 'POST':
         # Extract form data
-        name = request.form['name']
-        genre = request.form['genre']
-        
-        # Process the data (e.g., add it to a database)
-        # For now, let's just print it to the console
-        print("Name:", name, ":", "Favorite Genre:", genre)
-        
-        flash('User added successfully! Huzzah!', 'success')  # 'success' is a category; makes a green banner at the top
-        # Redirect to home page or another page upon successful submission
-        return redirect(url_for('home'))
+        continent = request.form['continent']
+        rows = execute_query("""
+            SELECT Name, Continent, Population
+            FROM country
+            WHERE Continent = %s
+            LIMIT 500
+        """, (continent,))
+
+        #This code below is specifically what I was helped with.
+        if not rows:
+            flash("Continent not found", "warning")
+            return redirect(url_for('search_continent'))
+       
     else:
         # Render the form page if the request method is GET
-        return render_template('add_user.html')
+        return render_template('display_users.html', users=rows)
 
 @app.route('/delete-user',methods=['GET', 'POST'])
 def delete_user():

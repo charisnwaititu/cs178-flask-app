@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Search Continent</title>
+  </head>
+  <body>
+    <h1>Search Continent</h1>
+    <form action="{{ url_for('search_continent') }}" method="post">
+      <label for="Continent">Continent:</label><br />
+      <input type="text" id="continent" name="continent" required /><br />
+
+      <input type="submit" value="Submit" />
+    </form>
+  </body>
+</html>
