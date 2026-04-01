@@ -59,7 +59,7 @@ def display_users():
         FROM country
         LIMIT 20
     """)
-    print(rows)
+
     return render_template('display_users.html', users = rows)
 
 
