@@ -51,15 +51,15 @@ def delete_user():
         return render_template('delete_user.html')
 
 
-@app.route('/display-users')
-def display_users():
+@app.route('/display-countries')
+def display_countries():
 
     rows = execute_query("""
         SELECT Name, Continent, Population
         FROM country
     """)
 
-    return render_template('display_users.html', users = rows)
+    return render_template('display_countries.html', users = rows)
 
 
 # these two lines of code should always be the last in the file
