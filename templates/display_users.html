@@ -19,9 +19,9 @@
             <tbody> <!-- table body -- loop through all of the users -->
                 {% for user in users %}
                 <tr>
-                    <td>{{ user[0] }}</td>
-                    <td>{{ user[1] }}</td>
-                    <td>{{ user[2] }}</td>
+                    <td>{{ user['Name'] }}</td>
+                    <td>{{ user['Continent'] }}</td>
+                    <td>{{ user['Population'] }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
