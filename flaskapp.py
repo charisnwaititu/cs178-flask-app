@@ -57,8 +57,6 @@ def display_users():
     rows = execute_query("""
         SELECT Name, Continent, Population
         FROM Country
-        WHERE Continent = 'Europe'
-        LIMIT 20
     """)
    
     return render_template('display_users.html', users = rows)
