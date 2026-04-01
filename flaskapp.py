@@ -56,7 +56,7 @@ def display_users():
 
     rows = execute_query("""
         SELECT Name, Continent, Population
-        FROM Country
+        FROM country
     """)
    
     return render_template('display_users.html', users = rows)
