@@ -58,8 +58,7 @@ def display_users():
         SELECT Name, Continent, Population
         FROM country
     """)
-    rows1 = rows[:15]
-    print(rows1)
+
     return render_template('display_users.html', users = rows)
 
 
