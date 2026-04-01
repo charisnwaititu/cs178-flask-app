@@ -57,9 +57,9 @@ def display_users():
     rows = execute_query("""
         SELECT Name, Continent, Population
         FROM country
-        LIMIT 5
     """)
-    print(rows)
+    rows1 = rows[:15]
+    print(rows1)
     return render_template('display_users.html', users = rows)
 
 
