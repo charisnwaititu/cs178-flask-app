@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>List of Countries</title>
+    <!-- Bootstrap CSS for styling the table -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h2 class="mt-5">List of Countries</h2>
+        <table class="table table-bordered table-striped mt-3">
+            <thead class="thead-dark"> <!-- creates a dark background for the table header -->
+                <tr>
+                    <th>Country</th>
+                    <th>Continent</th>
+                    <th>Population</th>
+                </tr>
+            </thead>
+            <tbody> <!-- table body -- loop through all of the users -->
+                {% for user in users %}
+                <tr>
+                    <td>{{ user['Name'] }}</td>
+                    <td>{{ user['Continent'] }}</td>
+                    <td>{{ user['Population'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+ </body>
+</html>
