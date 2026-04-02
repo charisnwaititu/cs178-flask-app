@@ -17,7 +17,7 @@ def home():
 
 
 
-#This function is written with the help of ChatGPT. 
+
 def view_continent(continent):
         """
     Returns all countries that are in that continent.
@@ -47,6 +47,7 @@ def continent_form_post():
     continent = request.form['continent']
     rows = view_continent(continent)
 
+    #ChatGPT helped me write this code. I wanted a warning to flash when the user types a continent that doesn't exist.
     if not rows:
         flash("Continent not found!", "warning")
         return redirect(url_for('continent_form'))
