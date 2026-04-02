@@ -18,26 +18,40 @@ def home():
 
 
 #This function is written with the help of ChatGPT. 
-@app.route('/search-continent', methods=['GET', 'POST'])
-def search_continent():
-    if request.method == 'POST':
-        # Extract form data
-        continent = request.form['continent']
+def view_continent(continent):
+        """
+    Returns all countries that are in that continent.
+    """
         rows = execute_query("""
             SELECT Name, Continent, Population
             FROM country
             WHERE Continent = %s
             LIMIT 500
-        """, (continent,))
+    """, (str(continent),))
+        return rows
 
-        #This code below is specifically what I was helped with.
-        if not rows:
-            flash("Continent not found", "warning")
-            return redirect(url_for('search_continent'))
-       
-    else:
-        # Render the form page if the request method is GET
-        return render_template('display_users.html', users=rows)
+@app.route("/search-continent", methods=['GET'])
+def continent_form():
+    """
+    Renders an empty form for the user to type a continent name.
+    """
+    return render_template('continents.html', fieldname="Continent")
+
+
+@app.route('/search-continent', methods=['GET', 'POST'])
+def continent_form_post():
+    """
+    Reads the continent typed in the form, runs the query, and returns results.
+    If no countries are found, flash a warning and redirect back.
+    """
+    continent = request.form['continent']
+    rows = view_continent(continent)
+
+    if not rows:
+        flash("Continent not found!", "warning")
+        return redirect(url_for('continent_form'))
+
+    return render_template('display_countries.html', users=rows)
 
 @app.route('/delete-user',methods=['GET', 'POST'])
 def delete_user():
