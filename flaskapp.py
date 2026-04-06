@@ -161,7 +161,7 @@ def delete_user():
             flash(f"User '{name}' deleted successfully!", "warning")
         else:
             flash(f"User '{name}' does not exist!", "warning")
-            return redirect(url_for('delete_user'))
+
         return redirect(url_for('home'))
 
     return render_template('delete_user.html')
