@@ -127,8 +127,8 @@ def add_country():
         })
             flash(f"{country_name} added to your favorites!", "success")
             return redirect(url_for('home'))
-        # GET request: render the form
-        return render_template('add_user.html')
+
+    return render_template('add_user.html')
 
 
 @app.route('/delete-user', methods=['GET', 'POST'])
