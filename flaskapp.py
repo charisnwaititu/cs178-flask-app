@@ -70,8 +70,10 @@ def country_capital():
      '''
      Displays the capital of a country
      '''
+
+     #Here both columns are named Name so I had to troubleshoot with chat and was recommended an alias
      rows= execute_query('''
-            SELECT country.Name, city.Name
+            SELECT country.Name AS CountryName, city.Name AS CapitalName 
             FROM country
             JOIN city ON country.Capital = city.ID
             LIMIT 20''')
