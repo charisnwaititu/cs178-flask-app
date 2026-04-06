@@ -139,7 +139,7 @@ def delete_user():
             WHERE Name = %s
         """, (name,))
 
-        flash(f"User '{name}' deleted successfully!", "warning")  # warning = yellow
+        flash(f"User '{name}' deleted successfully!", "warning") 
         return redirect(url_for('home'))
 
     # GET request: render the form
