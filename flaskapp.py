@@ -141,22 +141,29 @@ def add_country():
 @app.route('/delete-user', methods=['GET', 'POST'])
 def delete_user():
     if request.method == 'POST':
-        # Get the username from the form
         name = request.form['name']
+        table = get_table()
 
-        table = get_table()  # your DynamoDB helper
+        #This chunk of code is written with the help of CHAT
+        response = table.query(
+            KeyConditionExpression=Key('Username').eq(name))
+        items = response.get('Items', [])
+        if items:
+            country = items[0]['Country']
 
-        # Check if the user exists first
-        response = table.get_item(Key={"Username": name})
-        if "Item" in response:
-            table.delete_item(Key={"Username": name})
+            table.delete_item(
+                Key={
+                    "Username": name,
+                    "Country": country
+                }
+            )
+
             flash(f"User '{name}' deleted successfully!", "warning")
         else:
             flash(f"User '{name}' does not exist!", "warning")
 
         return redirect(url_for('home'))
 
-    # GET request: show the form
     return render_template('delete_user.html')
 
 
