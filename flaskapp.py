@@ -74,7 +74,7 @@ def country_capital():
             SELECT country.Name, city.Name
             FROM country
             JOIN city ON country.Capital = city.ID
-            LIMIT 20;''')
+            LIMIT 20''')
      return render_template('country_capitals.html', users = rows)
   
 
