@@ -30,6 +30,12 @@ def view_continent(continent):
     """, (str(continent),))
         return rows
 
+@app.route("/search-continent", methods=['GET'])
+def continent_form():
+    """
+    Renders an empty form for the user to type a continent name.
+    """
+    return render_template('continents.html', fieldname="Continent")
 
 
 @app.route('/search-continent', methods=['GET', 'POST'])
@@ -69,6 +75,8 @@ def country_capital():
             FROM country
             JOIN city ON country.Capital = city.ID
             LIMIT 20''')
+     
+     print('ROW:',rows)
      return render_template('country_capitals.html', users = rows)
   
 
