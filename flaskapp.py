@@ -99,7 +99,7 @@ def country_capital():
 def add_country():
     if request.method == 'POST':
         # Get the user input from the form
-        name= request.form['username']
+        name = request.form['username']
         country_name = request.form['country']
 
         # Check MySQL if the country exists
@@ -111,20 +111,20 @@ def add_country():
 
         if not rows:
             flash(f"{country_name} is not a valid country!", "warning")
-            return redirect(url_for('add_country'))
-           
+            return render_template('add_user.html')  # stay on the same page
+
         # Insert into DynamoDB if valid
         table = get_table()  
-        
+
         # Check if user already has a favorite
         existing = table.get_item(Key={"Username": name})
         if "Item" in existing:
-            flash(f"User '{name}' already has a favorite country: {existing['Item']['Country']}")
+            flash(f"User '{name}' already has a favorite country: {existing['Item']['Country']}", "warning")
         else:
             table.put_item(Item={
-            "Username": name,  # Replace with session username if using login
-            "Country": country_name
-        })
+                "Username": name,
+                "Country": country_name
+            })
             flash(f"{country_name} added to your favorites!", "success")
             return redirect(url_for('home'))
 
