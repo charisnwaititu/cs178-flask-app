@@ -99,8 +99,8 @@ def country_capital():
 def add_country():
     if request.method == 'POST':
         # Get the user input from the form
-        name = request.form['username']
-        country_name = request.form['country']
+        name = request.form['username']  
+        country_name = request.form['country'] 
 
         # Check MySQL if the country exists
         rows = execute_query("""
@@ -110,24 +110,29 @@ def add_country():
         """, (country_name,))
 
         if not rows:
+            # Country not valid — show warning on same page
             flash(f"{country_name} is not a valid country!", "warning")
-            return render_template('add_user.html')  # stay on the same page
+            return render_template('add_user.html')
 
-        # Insert into DynamoDB if valid
-        table = get_table()  
+        table = get_table()
 
-        # Check if user already has a favorite
+        # Check if the user already has a favorite
         existing = table.get_item(Key={"Username": name})
         if "Item" in existing:
+            # User already has a favorite — show warning
             flash(f"User '{name}' already has a favorite country: {existing['Item']['Country']}", "warning")
-        else:
-            table.put_item(Item={
-                "Username": name,
-                "Country": country_name
-            })
-            flash(f"{country_name} added to your favorites!", "success")
-            return redirect(url_for('home'))
+            return render_template('add_user.html')
 
+        table.put_item(Item={
+            "Username": name,
+            "Country": country_name
+        })
+
+        # Success — redirect to home
+        flash(f"{country_name} added to your favorites!", "success")
+        return redirect(url_for('home'))
+
+    # GET request: render the form
     return render_template('add_user.html')
 
 
