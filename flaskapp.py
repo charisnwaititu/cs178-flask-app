@@ -121,7 +121,7 @@ def add_country():
         })
 
         flash(f"{country_name} added to your favorites!", "success")
-        return redirect(url_for('view_fav_countries'))
+        return redirect(url_for('view_favs'))
 
     # GET request: render the form
     return render_template('add_user.html')
@@ -155,7 +155,7 @@ def view_fav_countries():
     items = response.get('Items', [])
 
     # Render an HTML template and pass the items
-    return render_template('view_fav_countries.html', countries=items)
+    return render_template('view_favs.html', countries=items)
 
 # these two lines of code should always be the last in the file
 if __name__ == '__main__':
