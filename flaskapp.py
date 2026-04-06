@@ -75,6 +75,7 @@ def country_capital():
             FROM country
             JOIN city ON country.Capital = city.ID
                          ''')
+     print(rows)
      return render_template('country_capitals.html', users = rows)
   
 
