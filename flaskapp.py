@@ -43,6 +43,13 @@ def view_continent(continent):
     """, (str(continent),))
         return rows
 
+@app.route("/search-continent", methods=['GET'])
+def continent_form():
+    """
+    Renders an empty form for the user to type a continent name.
+    """
+    return render_template('continents.html', fieldname="Continent")
+
 
 @app.route('/search-continent', methods=['GET', 'POST'])
 def continent_form_post():
@@ -50,17 +57,16 @@ def continent_form_post():
     Reads the continent typed in the form, runs the query, and returns results.
     If no countries are found, flash a warning and redirect back.
     """
-    #CHAT helped with if statement
-    if request.method == ['POST']:
-         continent = request.form['continent']
-         rows = view_continent(continent)
-         if not rows:
-              flash("Continent not found!", "warning")
-              return redirect(url_for('continent_form'))
-         
-         return render_template('display_countries.html', users=rows)
-    return render_template('continents.html', fieldname="Continent")
+    continent = request.form['continent']
+    rows = view_continent(continent)
 
+    #ChatGPT helped me write this code. I wanted a warning to flash when the user types a continent that doesn't exist.
+    if not rows:
+        flash("Continent not found!", "warning")
+        return redirect(url_for('continent_form'))
+
+    return render_template('display_countries.html', users=rows)
+    
 
 
 @app.route('/display-countries')
@@ -85,12 +91,71 @@ def country_capital():
             FROM country
             JOIN city ON country.Capital = city.ID''')
      
-     print('ROW:',rows)
      return render_template('country_capitals.html', users = rows)
   
+# Flask route to add a favorite country
+# Written with the help of chat
+@app.route('/add-country', methods=['GET', 'POST'])
+def add_country():
+    if request.method == 'POST':
+        # Get the user input from the form
+        name= request.form['username']
+        country_name = request.form['country']
+
+        # Check MySQL if the country exists
+        rows = execute_query("""
+            SELECT Name
+            FROM country
+            WHERE Name = %s
+        """, (country_name,))
+
+        if not rows:
+            flash(f"{country_name} is not a valid country!", "warning")
+            return redirect(url_for('add_country'))
+
+        # Insert into DynamoDB if valid
+        table = get_table()  # your DynamoDB helper function
+        table.put_item(Item={
+            "Username": name,  # Replace with session username if using login
+            "Country": country_name
+        })
+
+        flash(f"{country_name} added to your favorites!", "success")
+        return redirect(url_for('view_fav_countries'))
+
+    # GET request: render the form
+    return render_template('add_country.html')
 
 
+@app.route('/delete-user', methods=['GET', 'POST'])
+def delete_user():
+    if request.method == 'POST':
+        # Get the user input from the form
+        name = request.form['name']
 
+
+        execute_query("""
+            DELETE FROM users
+            WHERE Name = %s
+        """, (name,))
+
+        flash(f"User '{name}' deleted successfully!", "warning")  # warning = yellow
+        return redirect(url_for('home'))
+
+    # GET request: render the form
+    return render_template('delete_user.html')
+
+
+@app.route('/view-favs')
+def view_fav_countries():
+    table = get_table()  
+
+    # Scan the table to get all items
+    response = table.scan()
+    items = response.get('Items', [])
+
+    # Render an HTML template and pass the items
+    return render_template('view_fav_countries.html', countries=items)
 
 # these two lines of code should always be the last in the file
 if __name__ == '__main__':

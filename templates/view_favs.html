@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Favorite Countries</title>
+</head>
+<body>
+    <h1>Favorite Countries</h1>
+    <table border="1">
+        <tr>
+            <th>Username</th>
+            <th>Country</th>
+        </tr>
+        {% for item in countries %}
+        <tr>
+            <td>{{ item.Username }}</td>
+            <td>{{ item.Country }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
