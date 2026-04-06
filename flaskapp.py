@@ -121,7 +121,7 @@ def add_country():
         })
 
         flash(f"{country_name} added to your favorites!", "success")
-        return redirect(url_for('view_favs'))
+        return redirect(url_for('home'))
 
     # GET request: render the form
     return render_template('add_user.html')
