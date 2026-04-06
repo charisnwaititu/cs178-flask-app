@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>List of Countries</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h2 class="mt-5">List of Country Capitals</h2>
+
+        <table class="table table-bordered table-striped mt-3">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Country</th>
+                    <th>Capital</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user[0] }}</td>
+                    <td>{{ user[1] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+</body>
+</html>

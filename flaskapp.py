@@ -54,23 +54,6 @@ def continent_form_post():
 
     return render_template('display_countries.html', users=rows)
 
-@app.route('/delete-user',methods=['GET', 'POST'])
-def delete_user():
-    if request.method == 'POST':
-        # Extract form data
-        name = request.form['name']
-        
-        # Process the data (e.g., add it to a database)
-        # For now, let's just print it to the console
-        print("Name to delete:", name)
-        
-        flash('User deleted successfully! Hoorah!', 'warning') 
-        # Redirect to home page or another page upon successful submission
-        return redirect(url_for('home'))
-    else:
-        # Render the form page if the request method is GET
-        return render_template('delete_user.html')
-
 
 @app.route('/display-countries')
 def display_countries():
@@ -82,6 +65,18 @@ def display_countries():
 
     return render_template('display_countries.html', users = rows)
 
+@app.route('/country-capital')
+def country_capital():
+     '''
+     Displays the capital of a country
+     '''
+     rows= execute_query('''
+            SELECT country.Name, city.Name
+            FROM country
+            JOIN city ON country.Capital = city.ID
+            LIMIT 20;''')
+     return render_template('country_capitals.html', users = rows)
+  
 
 # these two lines of code should always be the last in the file
 if __name__ == '__main__':
