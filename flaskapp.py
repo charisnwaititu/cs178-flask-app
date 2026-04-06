@@ -133,9 +133,8 @@ def delete_user():
         # Get the user input from the form
         name = request.form['name']
 
-
         execute_query("""
-            DELETE FROM users
+            DELETE FROM Username
             WHERE Name = %s
         """, (name,))
 
