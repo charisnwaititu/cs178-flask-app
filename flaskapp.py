@@ -112,19 +112,23 @@ def add_country():
         if not rows:
             flash(f"{country_name} is not a valid country!", "warning")
             return redirect(url_for('add_country'))
-
+           
         # Insert into DynamoDB if valid
-        table = get_table()  # your DynamoDB helper function
-        table.put_item(Item={
+        table = get_table()  
+        
+        # Check if user already has a favorite
+        existing = table.get_item(Key={"Username": name})
+        if "Item" in existing:
+            flash(f"User '{name}' already has a favorite country: {existing['Item']['Country']}")
+        else:
+            table.put_item(Item={
             "Username": name,  # Replace with session username if using login
             "Country": country_name
         })
-
-        flash(f"{country_name} added to your favorites!", "success")
-        return redirect(url_for('home'))
-
-    # GET request: render the form
-    return render_template('add_user.html')
+            flash(f"{country_name} added to your favorites!", "success")
+            return redirect(url_for('home'))
+        # GET request: render the form
+        return render_template('add_user.html')
 
 
 @app.route('/delete-user', methods=['GET', 'POST'])
@@ -133,17 +137,32 @@ def delete_user():
         # Get the username from the form
         name = request.form['name']
 
-        # Delete from DynamoDB
-        table = get_table()
-        response = table.delete_item(
-            Key={"Username": name}
-        )
+        table = get_table()  # your DynamoDB helper
 
-        flash(f"User '{name}' and their favorite country have been deleted!", "warning")
+        # Check if the user exists first
+        response = table.get_item(Key={"Username": name})
+        if "Item" in response:
+            table.delete_item(Key={"Username": name})
+            flash(f"User '{name}' deleted successfully!", "warning")
+        else:
+            flash(f"User '{name}' does not exist!", "warning")
+
         return redirect(url_for('home'))
 
-    # GET request: render the form
+    # GET request: show the form
     return render_template('delete_user.html')
+
+
+@app.route('/view-favs')
+def view_fav_countries():
+    table = get_table()  
+
+    # Scan the table to get all items
+    response = table.scan()
+    items = response.get('Items', [])
+
+    # Render an HTML template and pass the items
+    return render_template('view_favs.html', countries=items)
 
 # these two lines of code should always be the last in the file
 if __name__ == '__main__':
