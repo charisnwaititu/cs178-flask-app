@@ -130,31 +130,20 @@ def add_country():
 @app.route('/delete-user', methods=['GET', 'POST'])
 def delete_user():
     if request.method == 'POST':
-        # Get the user input from the form
+        # Get the username from the form
         name = request.form['name']
 
-        execute_query("""
-            DELETE FROM Username
-            WHERE Name = %s
-        """, (name,))
+        # Delete from DynamoDB
+        table = get_table()
+        response = table.delete_item(
+            Key={"Username": name}
+        )
 
-        flash(f"User '{name}' deleted successfully!", "warning") 
+        flash(f"User '{name}' and their favorite country have been deleted!", "warning")
         return redirect(url_for('home'))
 
     # GET request: render the form
     return render_template('delete_user.html')
-
-
-@app.route('/view-favs')
-def view_fav_countries():
-    table = get_table()  
-
-    # Scan the table to get all items
-    response = table.scan()
-    items = response.get('Items', [])
-
-    # Render an HTML template and pass the items
-    return render_template('view_favs.html', countries=items)
 
 # these two lines of code should always be the last in the file
 if __name__ == '__main__':
