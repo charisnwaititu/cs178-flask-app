@@ -116,12 +116,14 @@ def add_country():
 
         table = get_table()
 
-        # Check if the user already has a favorite
-        existing = table.get_item(Key={"Username": name})
-        if "Item" in existing:
-            # User already has a favorite — show warning
-            flash(f"User '{name}' already has a favorite country: {existing['Item']['Country']}", "warning")
+        #This block is written with the help of ChatGPT. I wanted users to only have one favourite country
+        response = table.query(
+            KeyConditionExpression=Key('Username').eq(name)
+        )
+        if response['Items']:
+            flash(f"User '{name}' already has a favorite country!", "warning")
             return render_template('add_user.html')
+        
 
         table.put_item(Item={
             "Username": name,
