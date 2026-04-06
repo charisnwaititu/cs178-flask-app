@@ -124,7 +124,7 @@ def add_country():
         return redirect(url_for('view_fav_countries'))
 
     # GET request: render the form
-    return render_template('add_country.html')
+    return render_template('add_user.html')
 
 
 @app.route('/delete-user', methods=['GET', 'POST'])
