@@ -157,6 +157,21 @@ def delete_user():
     # GET request: show the form
     return render_template('delete_user.html')
 
+@app.route('/update-country', methods=['POST'])
+def update_country():
+    name = request.form['name']
+    country = request.form['country']
+    table = get_table()
+
+    table.update_item(
+        Key={"Username": name},
+        UpdateExpression="SET Country = :c",
+        ExpressionAttributeValues={":c": country}
+    )
+
+    flash("Updated successfully!", "success")
+    return redirect(url_for('home'))
+
 @app.route('/view-favs')
 def view_fav_countries():
     table = get_table()  
