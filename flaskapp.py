@@ -157,20 +157,39 @@ def delete_user():
     # GET request: show the form
     return render_template('delete_user.html')
 
-@app.route('/update-country', methods=['POST'])
+
+@app.route('/update-country', methods=['GET', 'POST'])
 def update_country():
-    name = request.form['name']
-    country = request.form['country']
     table = get_table()
 
-    table.update_item(
-        Key={"Username": name},
-        UpdateExpression="SET Country = :c",
-        ExpressionAttributeValues={":c": country}
-    )
+    if request.method == 'POST':
+        name = request.form['name']
+        country = request.form['country']
 
-    flash("Updated successfully!", "success")
-    return redirect(url_for('home'))
+        # Check if user exists
+        existing = table.get_item(Key={"Username": name})
+        if "Item" not in existing:
+            flash(f"User '{name}' does not exist!", "warning")
+            return redirect(url_for('update_country'))
+
+        # Check if country is valid in MySQL
+        rows = execute_query("SELECT Name FROM country WHERE Name = %s", (country,))
+        if not rows:
+            flash(f"{country} is not a valid country!", "warning")
+            return redirect(url_for('update_country'))
+
+        # Update the favorite country
+        table.update_item(
+            Key={"Username": name},
+            UpdateExpression="SET Country = :c",
+            ExpressionAttributeValues={":c": country}
+        )
+
+        flash(f"{name}'s favorite country updated to {country}!", "success")
+        return redirect(url_for('home'))
+
+    # GET request: render a simple form
+    return render_template('update_country.html')
 
 @app.route('/view-favs')
 def view_fav_countries():
