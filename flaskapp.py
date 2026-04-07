@@ -163,7 +163,7 @@ def update_country():
     table = get_table()
 
     if request.method == 'POST':
-        name = request.form['name']
+        name = request.form['username']
         country = request.form['country']
 
         # Check if user exists
