@@ -23,17 +23,17 @@
     <form action="{{ url_for('update_country') }}" method="post" class="mt-3">
       <div class="form-group">
         <label for="username">Your Name:</label>
-        <input type="text" class="form-control" id="username" name="username" required />
+        <input type="text" class="form-control" id="username" name="username" required /><br />
       </div>
       
       <div class="form-group">
         <label for="country">New Country:</label>
-        <input type="text" class="form-control" id="country" name="country" required />
+        <input type="text" class="form-control" id="country" name="country" required /><br />
       </div>
       
-      <button type="submit" class="btn btn-primary mt-2">Update Country</button>
-      <a href="{{ url_for('home') }}" class="btn btn-secondary mt-2">Back to Homepage</a>
+      <input type="submit" value="Update Country" />
     </form>
+    <a href="{{ url_for('home') }}">Back to Homepage</a>
 
   </body>
 </html>
