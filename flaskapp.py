@@ -110,24 +110,28 @@ def add_country():
 
         table = get_table()
 
-        # Check if user already has a favorite country (ChatGPT helped. I wanted to check if user already had a favorite country so that the same user doesn't try to enter two favorite countries)
+        # Check if user already has a favorite country
         existing = table.get_item(Key={"Username": name})
         if "Item" in existing:
             flash(f"User '{name}' already has a favorite country!", "warning")
             return render_template('add_user.html')
 
-        # Add the favorite country
-        table.put_item(Item={
-            "Username": name,
-            "Country": country_name
-        })
+        try:
+            # Add the favorite country
+            table.put_item(Item={
+                "Username": name,
+                "Country": country_name
+            })
 
-        flash(f"{country_name} added to your favorites!", "success")
-        return redirect(url_for('home'))
+            flash(f"{country_name} added to your favorites!", "success")
+            return redirect(url_for('home'))
+
+        except Exception as e:
+            flash("Error adding favorite country. Please try again.", "warning")
+            return render_template('add_user.html')
 
     # GET request: render the form
     return render_template('add_user.html')
-
 
 @app.route('/delete-user', methods=['GET', 'POST'])
 def delete_user():
@@ -135,19 +139,23 @@ def delete_user():
         name = request.form['name']
         table = get_table()
 
-        # Check if the user exists (ChatGPT helped, like above. Did both at the same time)
-        response = table.get_item(Key={"Username": name})
-        if "Item" in response:
-            table.delete_item(Key={"Username": name})
-            flash(f"User '{name}' deleted successfully!", "warning")
-        else:
-            flash(f"User '{name}' does not exist!", "warning")
+        try:
+            # Check if the user exists
+            response = table.get_item(Key={"Username": name})
+
+            if "Item" in response:
+                table.delete_item(Key={"Username": name})
+                flash(f"User '{name}' deleted successfully!", "warning")
+            else:
+                flash(f"User '{name}' does not exist!", "warning")
+
+        except Exception as e:
+            flash("Error deleting user.", "warning")
 
         return redirect(url_for('home'))
 
     # GET request: show the form
     return render_template('delete_user.html')
-
 
 @app.route('/view-favs')
 def view_fav_countries():
