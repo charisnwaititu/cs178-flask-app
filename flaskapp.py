@@ -28,9 +28,6 @@ app.secret_key = 'your_secret_key' # this is an artifact for using flash display
 def home():
     return render_template('home.html')
 
-
-
-
 def view_continent(continent):
         """
     Returns all countries that are in that continent.
@@ -85,7 +82,7 @@ def country_capital():
      Displays the capital of a country
      '''
 
-     #Here both columns are named Name so I had to troubleshoot with chat and was recommended an alias
+     #Here both columns are named Name so I had to troubleshoot with ChatGPT and was recommended an alias
      rows= execute_query('''
             SELECT country.Name AS CountryName, city.Name AS CapitalName 
             FROM country
@@ -93,14 +90,12 @@ def country_capital():
      
      return render_template('country_capitals.html', users = rows)
   
-# Flask route to add a favorite country
-# Written with the help of chat
 @app.route('/add-country', methods=['GET', 'POST'])
 def add_country():
     if request.method == 'POST':
         # Get the user input from the form
-        name = request.form['username']  
-        country_name = request.form['country'] 
+        name = request.form['username']
+        country_name = request.form['country']
 
         # Check MySQL if the country exists
         rows = execute_query("""
@@ -110,27 +105,23 @@ def add_country():
         """, (country_name,))
 
         if not rows:
-            # Country not valid — show warning on same page
             flash(f"{country_name} is not a valid country!", "warning")
             return render_template('add_user.html')
 
         table = get_table()
 
-        #This block is written with the help of ChatGPT. I wanted users to only have one favourite country
-        response = table.query(
-            KeyConditionExpression=Key('Username').eq(name)
-        )
-        if response['Items']:
+        # Check if user already has a favorite country (ChatGPT helped. I wanted to check if user already had a favorite country so that the same user doesn't try to enter two favorite countries)
+        existing = table.get_item(Key={"Username": name})
+        if "Item" in existing:
             flash(f"User '{name}' already has a favorite country!", "warning")
             return render_template('add_user.html')
-        
 
+        # Add the favorite country
         table.put_item(Item={
             "Username": name,
             "Country": country_name
         })
 
-        # Success — redirect to home
         flash(f"{country_name} added to your favorites!", "success")
         return redirect(url_for('home'))
 
@@ -144,26 +135,17 @@ def delete_user():
         name = request.form['name']
         table = get_table()
 
-        #This chunk of code is written with the help of CHAT
-        response = table.query(
-            KeyConditionExpression=Key('Username').eq(name))
-        items = response.get('Items', [])
-        if items:
-            country = items[0]['Country']
-
-            table.delete_item(
-                Key={
-                    "Username": name,
-                    "Country": country
-                }
-            )
-
+        # Check if the user exists (ChatGPT helped, like above. Did both at the same time)
+        response = table.get_item(Key={"Username": name})
+        if "Item" in response:
+            table.delete_item(Key={"Username": name})
             flash(f"User '{name}' deleted successfully!", "warning")
         else:
             flash(f"User '{name}' does not exist!", "warning")
 
         return redirect(url_for('home'))
 
+    # GET request: show the form
     return render_template('delete_user.html')
 
 

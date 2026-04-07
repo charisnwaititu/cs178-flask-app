@@ -1,15 +1,14 @@
-# [Your Project Name Here]
+# Going Around the world!!!
 
 **CS178: Cloud and Database Systems — Project #1**
-**Author:** [Your Name]
-**GitHub:** [your-username]
+**Author:** Charis Waititu
+**GitHub:** charisnwaititu
 
 ---
 
 ## Overview
 
-<!-- Describe your project in 2-4 sentences. What does it do? Who is it for? What problem does it solve? -->
-
+This project is a Flask web application that allows users to interact with the world database. Users can search for countries by continent, can look at countries capitals and can even save their favorite countries. DynamoDB is used to save users favorite countries, and delete any countries that are no longer favorites. 
 ---
 
 ## Technologies Used
@@ -70,7 +69,7 @@ ProjectOne/
 The app is deployed on an AWS EC2 instance. To view the live version:
 
 ```
-http://[your-ec2-public-ip]:8080
+http://54.242.211.158/:8080
 ```
 
 _(Note: the EC2 instance may not be running after project submission.)_
@@ -101,38 +100,47 @@ db = "your-database-name"
 
 **Example:**
 
-- `[TableName]` — stores [description]; primary key is `[key]`
-- `[TableName]` — stores [description]; foreign key links to `[other table]`
+- `city` — stores information about cities such as their name, countrycode, district and population; primary key is `ID`; 
+- `country` — stores information about countries (name, continent, population, capital, etc.); primary key is `Code`; foreign key links to `city`
+- `countrylanguage` — stores languages spoken in each country (language name, whether it is official, percentage); `CountryCode` is a foreign key that links to `country`
 
 The JOIN query used in this project: <!-- describe it in plain English -->
+The JOIN query combines the country and city tables to display each country along with its capital city. It works by matching the Capital field in the country table with the ID field in the city table, allowing the program to show both the country name and its capital city name in the same result.
 
 ### DynamoDB
 
 <!-- Describe your DynamoDB table. What is the partition key? What attributes does each item have? How does it connect to the rest of the app? -->
 
-- **Table name:** `[your-table-name]`
-- **Partition key:** `[key-name]`
-- **Used for:** [description]
+- **Table name:** `FavCountries`
+- **Partition key:** `Username`
+- **Attributes:** Stores `Username` and `Country`
+- **Used for:** Stores users favourite country. 
 
 ---
 
 ## CRUD Operations
 
-| Operation | Route      | Description    |
-| --------- | ---------- | -------------- |
-| Create    | `/[route]` | [what it does] |
-| Read      | `/[route]` | [what it does] |
-| Update    | `/[route]` | [what it does] |
-| Delete    | `/[route]` | [what it does] |
+| Operation | Route                | Description    |
+| --------- | ----------           | -------------- |
+| Create    | `/add-country`       | Adds a User's favorite country to `FavCountries`|
+| Read      | `/view-favs`         | Displays all users and their favorite countries by scanning the table. |
+| Read      | `/display-countries` | Shows all countries with name, continent, and population.|
+| Read      | `/search-continent`  | Queries countries in a specific continent. Flashes a warning if none are found.|
+| Read      | `/country-capital`   | Displays each country and its capital using a join between country and city tables.|
+| Update    | `/add-country`   | (Indirect) Could delete then add a different country for the user |
+| Delete    | `/delete-user`   | Deletes a user and their favorite country from the table. |
 
 ---
 
 ## Challenges and Insights
 
 <!-- What was the hardest part? What did you learn? Any interesting design decisions? -->
+While creating the DynamoDB database, I used a sort key, as I didn't fully understand what it was for. This led to my functions getting complicated since I didn't want 1 user to have 2 favourite countries. I deleted that table and created a new one with just a partition key and no sort key. I learned what a sort key does and how to use it. It allows the partition key value to be entered more than once (so that the sort and partition key together make up a primary key)
 
+I decided to split the buttons that explore the DynamoDB table and the one's that explore the world database on the home page for ease of access
 ---
 
 ## AI Assistance
 
 <!-- List any AI tools you used (e.g., ChatGPT) and briefly describe what you used them for. Per course policy, AI use is allowed but must be cited in code comments and noted here. -->
+I used ChatGPT mostly to debug the functions related to the add and delete user. This was because I originally had a sort key and was trying to make it work. I finally decided to delete the original table and the sort key. I used ChatGPT to check my logic (like if the user already had a favorite country, they couldn't enter a value again)
