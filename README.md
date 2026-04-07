@@ -15,8 +15,8 @@ This project is a Flask web application that allows users to interact with the w
 
 - **Flask** — Python web framework
 - **AWS EC2** — hosts the running Flask application
-- **AWS RDS (MySQL)** — relational database for [describe what you stored]
-- **AWS DynamoDB** — non-relational database for [describe what you stored]
+- **AWS RDS (MySQL)** — relational database for world database
+- **AWS DynamoDB** — non-relational database for users favorite countries
 - **GitHub Actions** — auto-deploys code from GitHub to EC2 on push
 
 ---
@@ -25,13 +25,19 @@ This project is a Flask web application that allows users to interact with the w
 
 ```
 ProjectOne/
-├── flaskapp.py          # Main Flask application — routes and app logic
-├── dbCode.py            # Database helper functions (MySQL connection + queries)
-├── creds_sample.py      # Sample credentials file (see Credential Setup below)
+├── flaskapp.py               # Main Flask application — routes and app logic
+├── dbCode.py                 # Database helper functions (MySQL connection + queries)
+├── creds_sample.py           # Sample credentials file (see Credential Setup below)
 ├── templates/
-│   ├── home.html        # Landing page
-│   ├── [other].html     # Add descriptions for your other templates
-├── .gitignore           # Excludes creds.py and other sensitive files
+│   ├── home.html             # Landing page
+│   ├── continents.html       # Form for searching countries by continent
+│   ├── country_capitals.html # Displays each country and their capital
+│   ├── display_countries.html# Displays all countries in the world database
+│   ├── add_user.html         # Form where user adds their favorite country
+│   ├── delete_user.html      # Form where user deletes their favorite country
+│   ├── update_country.html   # Form where user updates their favorite country
+│   ├── view_favs.html        # Displays all users and their favorite country from DynamoDB
+├── .gitignore                # Excludes creds.py and other sensitive files
 └── README.md
 ```
 
@@ -98,7 +104,6 @@ db = "your-database-name"
 
 <!-- Briefly describe your relational database schema. What tables do you have? What are the key relationships? -->
 
-**Example:**
 
 - `city` — stores information about cities such as their name, countrycode, district and population; primary key is `ID`; 
 - `country` — stores information about countries (name, continent, population, capital, etc.); primary key is `Code`; foreign key links to `city`
@@ -127,7 +132,7 @@ The JOIN query combines the country and city tables to display each country alon
 | Read      | `/display-countries` | Shows all countries with name, continent, and population.|
 | Read      | `/search-continent`  | Queries countries in a specific continent. Flashes a warning if none are found.|
 | Read      | `/country-capital`   | Displays each country and its capital using a join between country and city tables.|
-| Update    | `/add-country`   | (Indirect) Could delete then add a different country for the user |
+| Update    | `/update-country`   | Updates the favorite country of a user(if the user already exists in the table). |
 | Delete    | `/delete-user`   | Deletes a user and their favorite country from the table. |
 
 ---
@@ -144,3 +149,4 @@ I decided to split the buttons that explore the DynamoDB table and the one's tha
 
 <!-- List any AI tools you used (e.g., ChatGPT) and briefly describe what you used them for. Per course policy, AI use is allowed but must be cited in code comments and noted here. -->
 I used ChatGPT mostly to debug the functions related to the add and delete user. This was because I originally had a sort key and was trying to make it work. I finally decided to delete the original table and the sort key. I used ChatGPT to check my logic (like if the user already had a favorite country, they couldn't enter a value again)
+I also used ChatGPT to check my functions and improve them with try and except, specifically `add_country` and `delete_user`
