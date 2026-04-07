@@ -7,6 +7,7 @@
   </head>
   <body>
     <h1>Search Continent</h1>
+    <a href="{{ url_for('home') }}">Back to Homepage</a>
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
