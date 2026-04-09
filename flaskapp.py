@@ -31,12 +31,7 @@ def view_continent(continent):
         """
     Returns all countries that are in that continent.
     """
-        rows = execute_query("""
-            SELECT Name, Continent, Population
-            FROM country
-            WHERE Continent = %s
-            LIMIT 500
-    """, (str(continent),))
+        rows = get_countries_by_continent(continent)
         return rows
 
 @app.route("/search-continent", methods=['GET'])
@@ -67,12 +62,7 @@ def continent_form_post():
 
 @app.route('/display-countries')
 def display_countries():
-
-    rows = execute_query("""
-        SELECT Name, Continent, Population
-        FROM country
-    """)
-
+    rows = get_all_countries()
     return render_template('display_countries.html', users = rows)
 
 @app.route('/country-capital')
@@ -82,10 +72,7 @@ def country_capital():
      '''
 
      #Here both columns are named Name so I had to troubleshoot with ChatGPT and was recommended an alias
-     rows= execute_query('''
-            SELECT country.Name AS CountryName, city.Name AS CapitalName 
-            FROM country
-            JOIN city ON country.Capital = city.ID''')
+     rows= get_country_capitals()
      
      return render_template('country_capitals.html', users = rows)
   
